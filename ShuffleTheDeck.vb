@@ -4,6 +4,8 @@
 'Shuffle The Deck
 'https://github.com/IsabellaDougherty/ShuffleTheDeck.git
 
+Option Explicit On
+Option Strict On
 
 Imports System
 Imports System.ComponentModel.Design
@@ -28,15 +30,11 @@ Module ShuffleTheDeck
         userInput = Console.ReadLine()
         While userInput = ""
             If reshuffle = True Then
-                Console.WriteLine("Reshuffling the deck. Please hold...")
-                Console.WriteLine("...")
                 Shuffle(shuffling)
-                Console.WriteLine("...")
                 ShuffledDeck(deck, shuffling)
-                Console.WriteLine("...")
-                Console.WriteLine("Reshuffling complete!")
+                reshuffle = False
             Else
-                DrawCard(deck, reshuffle)
+                reshuffle = DrawCard(deck)
             End If
             userInput = Console.ReadLine()
         End While
@@ -45,7 +43,7 @@ Module ShuffleTheDeck
 
     'Goes through and assigns each slot in the deck array as an individual card for each
     'card in a standard 52 card deck
-    Sub CreateDeck(deck(,))
+    Sub CreateDeck(deck(,) As String)
         For i = 0 To 3
             For j = 0 To 12
                 Select Case j
@@ -91,7 +89,7 @@ Module ShuffleTheDeck
     End Sub
 
     'Iterates through the deck and assigns each value into the 1D array of shuffling
-    Sub Reassign(shuffling(), deck(,))
+    Sub Reassign(shuffling() As String, deck(,) As String)
         Dim iteration As Integer = 0
         For i = 0 To 3
             For j = 0 To 12
@@ -102,8 +100,8 @@ Module ShuffleTheDeck
     End Sub
 
     'Uses a simple swapping method to swap the values of the cards around
-    Function Shuffle(deck())
-        Dim value As String
+    Sub Shuffle(deck() As String)
+        Dim value As Integer
         Dim temp As String
         Static count As Integer = 0
         Dim random As New Random()
@@ -113,11 +111,10 @@ Module ShuffleTheDeck
             deck(count) = deck(value)
             deck(value) = temp
         Next
-        Return deck
-    End Function
+    End Sub
 
     'Reassigns the shuffling array to the deck array
-    Sub ShuffledDeck(deck, shuffling)
+    Sub ShuffledDeck(deck(,) As String, shuffling() As String)
         Dim iteration As Integer = 0
         For i = 0 To 3
             For j = 0 To 12
@@ -128,7 +125,7 @@ Module ShuffleTheDeck
     End Sub
 
     'Iterates through the deck array and prints it out nicely so the entire deck is visible
-    Sub PrintDeck(deck(,))
+    Sub PrintDeck(deck(,) As String)
         For i = 0 To 3
             For j = 0 To 12
                 Console.Write(deck(i, j) & " | ")
@@ -140,42 +137,37 @@ Module ShuffleTheDeck
     End Sub
 
     'Draws a random card and makes sure said card has not already been pulled
-    Sub DrawCard(deck(,), reshuffle)
-        Static drawn(3, 12) As Boolean
-        Static count As Integer
+    Function DrawCard(deck(,) As String) As Boolean
+        Static row As Integer
+        Static column As Integer
+        Static iterate As Integer
+        Static initiate As Boolean = False
         Dim remake As Boolean = False
-        Dim row As Integer
-        Dim column As Integer
-        Dim random As New Random()
-
-        row = random.Next(0, 3)
-        column = random.Next(0, 12)
-
+        initiate = True
         Try
-            While drawn(row, column) = True Or count < 51
-                If count < 51 Then
-                    row = random.Next(0, 3)
-                    column = random.Next(0, 12)
-                    count += 1
-                Else
-                    remake = True
-                End If
-            End While
-        Catch ex As Exception
-            Console.WriteLine("FAILURE")
-        End Try
-        If remake = False Then
-            drawn(row, column) = True
             Console.WriteLine(deck(row, column))
+
+            If column < 12 Then
+                column += 1
+            ElseIf column = 12 And row <= 3 Then
+                column = 0
+                row += 1
+            End If
+        Catch ex As Exception
+            remake = True
+        End Try
+        If remake Then
+            row = 0
+            column = 0
+            Console.WriteLine("Reshuffling...
+...
+...
+Complete!
+")
+            Return True
         Else
-            Console.WriteLine("Remaking")
-            For i = 0 To 3
-                For j = 0 To 12
-                    drawn(i, j) = False
-                Next
-            Next
-            reshuffle = True
+            Return False
         End If
-    End Sub
+    End Function
 
 End Module
