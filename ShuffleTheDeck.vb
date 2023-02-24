@@ -17,32 +17,30 @@ Module ShuffleTheDeck
         Dim list(51) As String
         Dim shuffling(51) As String
         Dim reshuffle As Boolean = False
-        Dim userInput As String = ""
-        Dim temp As String
-        Dim value As String
+        Static userInput As String = ""
 
         CreateDeck(deck)
         Reassign(shuffling, deck)
         Shuffle(shuffling)
         ShuffledDeck(deck, shuffling)
         'PrintDeck(deck)
-        Console.WriteLine("Press Enter to draw a card! Input anything at any time to quit")
-        userInput = Console.ReadLine()
-        While userInput = ""
-            If reshuffle = True Then
+        Console.WriteLine("Press Enter to draw a card! Input anything at any time to quit or input 'R/r' to reshuffle")
+        While userInput = "" Or userInput = "r" Or userInput = "R"
+            If reshuffle = True Or userInput = "r" Or userInput = "R" Then
                 Shuffle(shuffling)
                 ShuffledDeck(deck, shuffling)
                 reshuffle = False
             Else
                 reshuffle = DrawCard(deck)
             End If
+
             userInput = Console.ReadLine()
         End While
         Console.WriteLine("Have a good day!")
     End Sub
 
-    'Goes through and assigns each slot in the deck array as an individual card for each
-    'card in a standard 52 card deck
+    'Goes through and assigns each slot in the deck array as an individual card for each card in a standard
+    '52 card deck
     Sub CreateDeck(deck(,) As String)
         For i = 0 To 3
             For j = 0 To 12
@@ -100,17 +98,24 @@ Module ShuffleTheDeck
     End Sub
 
     'Uses a simple swapping method to swap the values of the cards around
+
+
     Sub Shuffle(deck() As String)
         Dim value As Integer
         Dim temp As String
         Static count As Integer = 0
         Dim random As New Random()
-        For i = 0 To 51
-            value = random.Next(0, 51)
-            temp = deck(count)
-            deck(count) = deck(value)
-            deck(value) = temp
-        Next
+        Console.WriteLine("Shuffling...
+...
+...
+Complete!
+")
+                For i = 0 To 51
+                    value = random.Next(0, 51)
+                    temp = deck(count)
+                    deck(count) = deck(value)
+                    deck(value) = temp
+                Next
     End Sub
 
     'Reassigns the shuffling array to the deck array
@@ -136,7 +141,8 @@ Module ShuffleTheDeck
         Next
     End Sub
 
-    'Draws a random card and makes sure said card has not already been pulled
+    'Draws cards from the deck in order of row and column. When the deck has been completly iterated through
+    'the function returns a true value for a boolean which tells the main sub to reshuffle the deck
     Function DrawCard(deck(,) As String) As Boolean
         Static row As Integer
         Static column As Integer
@@ -159,11 +165,6 @@ Module ShuffleTheDeck
         If remake Then
             row = 0
             column = 0
-            Console.WriteLine("Reshuffling...
-...
-...
-Complete!
-")
             Return True
         Else
             Return False
